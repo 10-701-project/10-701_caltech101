@@ -1,4 +1,4 @@
-The file, feature.mat, contains three variables that describe all 3060 images in the dataset:
+The file, baseline-feature.mat, contains three variables that describe all 3060 images in the dataset:
 
 imageClass: classification. 1 by 3060
 
