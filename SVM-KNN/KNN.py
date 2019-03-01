@@ -11,12 +11,12 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.io as sio
-from sklearn import *
-# from sklearn import neighbors
-# from sklearn.externals import joblib
-# from sklearn.metrics import classification_report, precision_recall_curve
-# from sklearn.model_selection import train_test_split
-# from sklearn.svm import SVC, LinearSVC
+# from sklearn import *
+from sklearn import neighbors
+from sklearn.externals import joblib
+from sklearn.metrics import classification_report, precision_recall_curve
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC, LinearSVC
 
 from dataprocessing import drawdata, readfile
 
@@ -75,9 +75,9 @@ def incre(x_train, y_train, x_test, y_test, x_incre, y_incre, numk):
 def training(ratio, numk):
 	# obtain data
 	data = readfile('C:/Users/Administrator/Desktop/ML/project/caltech101/ImageProcessing/baseline-feature.mat')
-	data_2 = drawdata(data['x'], data['y'], ratio)
-	x_train = data_2['x_train']
-	x_test = data_2['x_test']
+	data_2 = drawdata(data['x'], data['y'], ratio, ordered=False)
+	x_train = data_2['x_train'][:,:5000]
+	x_test = data_2['x_test'][:,:5000]
 	y_train = data_2['y_train']
 	y_test = data_2['y_test']
 
@@ -87,6 +87,6 @@ def training(ratio, numk):
 	
 
 if __name__ == '__main__':
-	result = training(0.8, 1)
+	result = training(0.8, 14)
 	for i in result.keys():
 		print(i, result[i])
