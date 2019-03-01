@@ -76,8 +76,8 @@ def training(ratio, numk):
 	# obtain data
 	data = readfile('C:/Users/Administrator/Desktop/ML/project/caltech101/ImageProcessing/baseline-feature.mat')
 	data_2 = drawdata(data['x'], data['y'], ratio, ordered=False)
-	x_train = data_2['x_train'][:,:5000]
-	x_test = data_2['x_test'][:,:5000]
+	x_train = data_2['x_train'][:,:6000]
+	x_test = data_2['x_test'][:,:6000]
 	y_train = data_2['y_train']
 	y_test = data_2['y_test']
 
@@ -87,6 +87,10 @@ def training(ratio, numk):
 	
 
 if __name__ == '__main__':
-	result = training(0.8, 14)
-	for i in result.keys():
-		print(i, result[i])
+	result = dict()
+	for i in range(20):
+		result[i+1] = training(0.8, i+1)
+		for j in result[i+1].keys():
+			print(j, result[i+1][j])
+		print('-'*50)
+		print('-'*50)
