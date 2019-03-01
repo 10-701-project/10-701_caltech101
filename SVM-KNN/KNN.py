@@ -1,32 +1,24 @@
 # -*- coding: utf-8 -*-
 
-import os
-import sys
-import numpy as np
-from sklearn import neighbors
-from sklearn.metrics import precision_recall_curve
-from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
+import collections
 import datetime
-from sklearn.svm import SVC
-from sklearn.svm import LinearSVC
-from sklearn.externals import joblib
+import os
+import random
+import sys
 import time
+from datetime import datetime
 
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy.io as sio
+from sklearn import *
+# from sklearn import neighbors
+# from sklearn.externals import joblib
+# from sklearn.metrics import classification_report, precision_recall_curve
+# from sklearn.model_selection import train_test_split
+# from sklearn.svm import SVC, LinearSVC
 
-def file2np(file_name):
-    xList = []
-    yList = []
-    read_file = open(file_name, 'r')
-    for line in read_file.read().split('\n'):
-        if line != '':
-            yList.append(float(line.split(' ')[0]))
-            xList.append([float(tk.split(':')[1])
-                         for tk in line.split(' ')[1:]])
-    xnp = np.array(xList)
-    ynp = np.array(yList)
-    return xnp, ynp
+from dataprocessing import drawdata, readfile
 
 
 def knn_train(x_train, y_train, x_test, y_test, numk):
@@ -36,7 +28,7 @@ def knn_train(x_train, y_train, x_test, y_test, numk):
         equivalent to using manhattan_distance (l1), and euclidean_distance
         (l2) for p = 2. For arbitrary p, minkowski_distance (l_p) is used.
 	'''
-	clf = neighbors.KNeighborsClassifier(n_neighbors=numk, algorithm='auto', p=2)
+	clf = neighbors.classification.KNeighborsClassifier(n_neighbors=numk, algorithm='auto', p=2)
 	
 	start = time.clock()
 	clf.fit(x_train, y_train)
@@ -80,37 +72,21 @@ def incre(x_train, y_train, x_test, y_test, x_incre, y_incre, numk):
 	print("**************************")
 '''
 
-def training():
-	# train_file = 'data/train_data.txt'
-	# test_file = 'data/test_data.txt' 
+def training(ratio, numk):
+	# obtain data
+	data = readfile('C:/Users/Administrator/Desktop/ML/project/caltech101/ImageProcessing/baseline-feature.mat')
+	data_2 = drawdata(data['x'], data['y'], ratio)
+	x_train = data_2['x_train']
+	x_test = data_2['x_test']
+	y_train = data_2['y_train']
+	y_test = data_2['y_test']
 
-	'''
-	train_file = sys.argv[1]
-	test_file = sys.argv[2] 
-	incre_file = sys.argv[3]
-	numk = int(sys.argv[4])
-	print(train_file)
-	print(test_file)
+	result = knn_train(x_train, y_train, x_test, y_test, numk)
 
-	X_train, y_train = file2np(train_file)
-	X_test, y_test = file2np(test_file)
-	X_incre, y_incre = file2np(incre_file)
-	
-	print("***********raw**********")
-	time1 = datetime.datetime.now()
-	knn_train(X_train, y_train, X_test, y_test, numk)
-	time2 = datetime.datetime.now()
-	print(time2-time1 )
-	print("************************")
-
-	incre(X_train, y_train, X_test, y_test, X_incre, y_incre, numk)
-	print("********************\n\n")
-	'''
-
-	
+	return result
 	
 
 if __name__ == '__main__':
-	training()
-
-
+	result = training(0.8, 1)
+	for i in result.keys():
+		print(i, result[i])
