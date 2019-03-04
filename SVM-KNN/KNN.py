@@ -60,18 +60,6 @@ def knn_train(x_train, y_train, x_test, y_test, numk):
 
 	return result
 
-'''
-def incre(x_train, y_train, x_test, y_test, x_incre, y_incre, numk):
-	X = np.concatenate((x_train, x_incre))
-	y = np.concatenate((y_train, y_incre))
-	print("***********incre**********")
-	time1 = datetime.datetime.now()
-	knn_train(X, y, x_test, y_test, numk)
-	time2 = datetime.datetime.now()
-	print(time2-time1)
-	print("**************************")
-'''
-
 def training(ratio, numk):
 	# obtain data
 	data = readfile('C:/Users/Administrator/Desktop/ML/project/caltech101/ImageProcessing/baseline-feature.mat')
