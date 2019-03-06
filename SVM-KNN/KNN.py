@@ -18,7 +18,7 @@ from sklearn.metrics import classification_report, precision_recall_curve
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC, LinearSVC
 
-from dataprocessing import drawdata, readfile
+from dataprocessing import drawdata, readfile, truncate
 
 
 def knn_train(x_train, y_train, x_test, y_test, numk):
@@ -63,6 +63,7 @@ def knn_train(x_train, y_train, x_test, y_test, numk):
 def training(ratio, numk):
 	# obtain data
 	data = readfile('C:/Users/Administrator/Desktop/ML/project/caltech101/ImageProcessing/baseline-feature.mat')
+	# data['x'] = truncate(data['x'], 6000)
 	data_2 = drawdata(data['x'], data['y'], ratio, ordered=False)
 	x_train = data_2['x_train'][:,:6000]
 	x_test = data_2['x_test'][:,:6000]

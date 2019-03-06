@@ -28,20 +28,6 @@ from dataprocessing import drawdata, readfile
 from KNN import knn_train
 
 
-def file2np(file_name):
-    xList = []
-    yList = []
-    read_file = open(file_name, 'r')
-    for line in read_file.read().split('\n'):
-        if line != '':
-            yList.append(float(line.split(' ')[0]))
-            xList.append([float(tk.split(':')[1])
-                         for tk in line.split(' ')[1:]])
-    xnp = np.array(xList)
-    ynp = np.array(yList)
-    return xnp, ynp
-
-
 def nnsvm_train(x_train, y_train, x_test, y_test, numk):
     '''
         p : integer, optional (default = 2)

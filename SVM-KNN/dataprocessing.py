@@ -3,6 +3,7 @@ import collections
 import numpy as np
 import random
 from datetime import datetime
+from sklearn.decomposition import PCA, TruncatedSVD
 
 def readfile(path):
     mat_contents = sio.loadmat(path)
@@ -34,6 +35,11 @@ def readfile(path):
         'x': x,
     }
     return result
+
+def truncate(x, n):
+    foo = TruncatedSVD(n_components=n)
+    newData = foo.fit_transform(x)
+    return newData
 
 def drawdata(x, y, ratio, ordered = True):
     '''
