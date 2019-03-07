@@ -36,16 +36,21 @@ def nnsvm_train(x_train, y_train, x_test, y_test, numk):
         (l2) for p = 2. For arbitrary p, minkowski_distance (l_p) is used.
     '''
 
-    knn = neighbors.NearestNeighbors(n_neighbors=numk, algorithm='auto', p=2)
-    knn.fit(x_train)
-
     # initialization
     length_train = len(y_train)
     length_test = len(y_test)
     y_hat_train = np.zeros_like(y_train)
     y_hat_test = np.zeros_like(y_test)
 
+    # training
+    start = time.clock()
+    knn = neighbors.NearestNeighbors(n_neighbors=numk, algorithm='auto', p=2)
+    knn.fit(x_train)
+    time_train = time.clock() - start
+
     # knn_train
+    start = time.clock()
+
     nb = knn.kneighbors(x_train, return_distance=False)
 
     # Naive SVM_KNN_train
@@ -60,11 +65,13 @@ def nnsvm_train(x_train, y_train, x_test, y_test, numk):
             clf.fit(x_temp, y_temp)
             y_hat_train[i] = clf.predict(x_train[i].reshape(1, -1))[0]
 
+    time_test_train = time.clock() - start
+
     # result_train
     train_error = float((y_hat_train != y_train).mean())
     
-
     # knn_test
+    start = time.clock()
     nb = knn.kneighbors(x_test, return_distance=False)
 
     # Naive SVM_KNN_test
@@ -79,12 +86,22 @@ def nnsvm_train(x_train, y_train, x_test, y_test, numk):
             clf.fit(x_temp, y_temp)
             y_hat_test[i] = clf.predict(x_test[i].reshape(1, -1))[0]
     
+    time_test_test = time.clock() - start
+
     # result_test
     test_error = float((y_hat_test != y_test).mean())
 
+    time_train_avg = time_train / len(y_train)
+    time_test_train_avg = time_test_train / len(y_train)
+    time_test_test_avg = time_test_test / len(y_test)
+
     result = {
+        'K': numk,
         'train_error': train_error,
         'test_error': test_error,
+        'time_train_avg': time_train_avg,
+        'time_test_train_avg': time_test_train_avg,
+        'time_test_test_avg': time_test_test_avg,
     }
     return result
 
@@ -103,4 +120,25 @@ def training(ratio, numk):
 
 if __name__ == '__main__':
     result = training(0.8, 3)
-    print(result)
+    for i in result.keys():
+        print(i, result[i])
+    print('-'*50)
+    print('-'*50)
+
+    result = training(0.8, 5)
+    for i in result.keys():
+        print(i, result[i])
+    print('-'*50)
+    print('-'*50)
+
+    result = training(0.8, 12)
+    for i in result.keys():
+        print(i, result[i])
+    print('-'*50)
+    print('-'*50)
+
+    result = training(0.8, 16)
+    for i in result.keys():
+        print(i, result[i])
+    print('-'*50)
+    print('-'*50)
