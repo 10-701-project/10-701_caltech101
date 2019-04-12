@@ -55,6 +55,7 @@ def nnsvm_train(x_train, y_train, x_test, y_test, numk):
 
     # Naive SVM_KNN_train
     for i in range(length_train):
+        # base is the label of nearest neighbor
         base = y_train[nb[i][0]]
         if all(y_train[j] == base for j in nb[i]):
             y_hat_train[i] = base
@@ -69,7 +70,7 @@ def nnsvm_train(x_train, y_train, x_test, y_test, numk):
 
     # result_train
     train_error = float((y_hat_train != y_train).mean())
-    
+
     # knn_test
     start = time.clock()
     nb = knn.kneighbors(x_test, return_distance=False)
@@ -85,7 +86,7 @@ def nnsvm_train(x_train, y_train, x_test, y_test, numk):
             clf = LinearSVC()
             clf.fit(x_temp, y_temp)
             y_hat_test[i] = clf.predict(x_test[i].reshape(1, -1))[0]
-    
+
     time_test_test = time.clock() - start
 
     # result_test
@@ -105,40 +106,56 @@ def nnsvm_train(x_train, y_train, x_test, y_test, numk):
     }
     return result
 
+
 def training(ratio, numk):
     # obtain data
-	data = readfile('C:/Users/Administrator/Desktop/ML/project/caltech101/ImageProcessing/baseline-feature.mat')
-	data_2 = drawdata(data['x'], data['y'], ratio, ordered=False)
-	x_train = data_2['x_train'][:,:6000]
-	x_test = data_2['x_test'][:,:6000]
-	y_train = data_2['y_train']
-	y_test = data_2['y_test']
+    data = readfile(
+        'C:/Users/Administrator/Desktop/ML/project/caltech101/ImageProcessing/baseline-feature.mat')
+    data_2 = drawdata(data['x'], data['y'], ratio, ordered=False)
+    x_train = data_2['x_train'][:, :6000]
+    x_test = data_2['x_test'][:, :6000]
+    y_train = data_2['y_train']
+    y_test = data_2['y_test']
 
-	result = nnsvm_train(x_train, y_train, x_test, y_test, numk)
+    result = nnsvm_train(x_train, y_train, x_test, y_test, numk)
 
-	return result
+    return result
+
 
 if __name__ == '__main__':
-    result = training(0.8, 3)
-    for i in result.keys():
-        print(i, result[i])
-    print('-'*50)
-    print('-'*50)
+    result = dict()
+    for i in range(20):
+        result[i+1] = training(0.8, i+1)
+        
+        print('K: ', result[i+1]['K'])
+        print('train_error: ', result[i+1]['train_error'])
+        print('test_error: ', result[i+1]['test_error'])
+        print('time_train_avg: ', result[i+1]['time_train_avg'])
+        print('time_test_train_avg: ', result[i+1]['time_test_train_avg'])
+        print('time_test_test_avg: ', result[i+1]['time_test_test_avg'])
 
-    result = training(0.8, 5)
-    for i in result.keys():
-        print(i, result[i])
-    print('-'*50)
-    print('-'*50)
+        print('-'*50)
+        print('-'*50)
+    # result = training(0.8, 3)
+    # for i in result.keys():
+    #     print(i, result[i])
+    # print('-'*50)
+    # print('-'*50)
 
-    result = training(0.8, 12)
-    for i in result.keys():
-        print(i, result[i])
-    print('-'*50)
-    print('-'*50)
+    # result = training(0.8, 5)
+    # for i in result.keys():
+    #     print(i, result[i])
+    # print('-'*50)
+    # print('-'*50)
 
-    result = training(0.8, 16)
-    for i in result.keys():
-        print(i, result[i])
-    print('-'*50)
-    print('-'*50)
+    # result = training(0.8, 12)
+    # for i in result.keys():
+    #     print(i, result[i])
+    # print('-'*50)
+    # print('-'*50)
+
+    # result = training(0.8, 16)
+    # for i in result.keys():
+    #     print(i, result[i])
+    # print('-'*50)
+    # print('-'*50)
