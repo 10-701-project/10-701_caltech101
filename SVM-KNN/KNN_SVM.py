@@ -26,7 +26,7 @@ from sklearn.svm import SVC, LinearSVC
 
 from dataprocessing import drawdata, readfile
 from KNN import knn_train
-
+from plot_confusion_matrix import plot_confusion_matrix
 
 def nnsvm_train(x_train, y_train, x_test, y_test, numk):
     '''
@@ -123,6 +123,7 @@ def training(ratio, numk):
 
 
 if __name__ == '__main__':
+    '''
     result = dict()
     for i in range(20):
         result[i+1] = training(0.8, i+1)
@@ -159,3 +160,50 @@ if __name__ == '__main__':
     #     print(i, result[i])
     # print('-'*50)
     # print('-'*50)
+    '''
+
+    # plot confusion matrix
+    data = readfile('baseline-feature.mat')
+    # data['x'] = truncate(data['x'], 6000)
+    data_2 = drawdata(data['x'], data['y'], 0.8, ordered=False)
+    x_train = data_2['x_train'][:,:6000]
+    x_test = data_2['x_test'][:,:6000]
+    y_train = data_2['y_train']
+    y_test = data_2['y_test']
+
+    length_train = len(y_train)
+    length_test = len(y_test)
+    y_hat_train = np.zeros_like(y_train)
+    y_hat_test = np.zeros_like(y_test)
+
+    knn = neighbors.NearestNeighbors(n_neighbors=20, algorithm='auto', p=2)
+    knn.fit(x_train)
+
+    nb = knn.kneighbors(x_test, return_distance=False)
+
+    # Naive SVM_KNN_test
+    for i in range(length_test):
+        base = y_train[nb[i][0]]
+        if all(y_train[j] == base for j in nb[i]):
+            y_hat_test[i] = base
+        else:
+            x_temp = x_train[nb[i]]
+            y_temp = y_train[nb[i]]
+            clf = LinearSVC()
+            clf.fit(x_temp, y_temp)
+            y_hat_test[i] = clf.predict(x_test[i].reshape(1, -1))[0]
+
+    namelist = []
+    for root, dirs, files in os.walk("./Annotations"):
+        namelist.append(dirs)
+    namelist = namelist[0]
+    namelist = np.array(namelist)
+
+    y_test = y_test - 1
+    y_hat_test = y_hat_test - 1
+
+    # namelist2 = []
+    # for i in range(101):
+    # 	namelist2.append(str(i))
+
+    plot_confusion_matrix(y_test, y_hat_test, normalize=True, classes=namelist, title='KNN-SVM')

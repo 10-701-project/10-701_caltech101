@@ -19,6 +19,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC, LinearSVC
 
 from dataprocessing import drawdata, readfile, truncate
+from plot_confusion_matrix import plot_confusion_matrix
 
 
 def knn_train(x_train, y_train, x_test, y_test, numk):
@@ -62,7 +63,7 @@ def knn_train(x_train, y_train, x_test, y_test, numk):
 
 def training(ratio, numk):
 	# obtain data
-	data = readfile('C:/Users/Administrator/Desktop/ML/project/caltech101/ImageProcessing/baseline-feature.mat')
+	data = readfile('./baseline-feature.mat')
 	# data['x'] = truncate(data['x'], 6000)
 	data_2 = drawdata(data['x'], data['y'], ratio, ordered=False)
 	x_train = data_2['x_train'][:,:6000]
@@ -76,6 +77,7 @@ def training(ratio, numk):
 	
 
 if __name__ == '__main__':
+	'''
 	result = dict()
 	for i in range(20):
 		result[i+1] = training(0.8, i+1)
@@ -83,3 +85,33 @@ if __name__ == '__main__':
 			print(j, result[i+1][j])
 		print('-'*50)
 		print('-'*50)
+	'''
+
+	# plot confusion matrix
+	data = readfile('baseline-feature.mat')
+	# data['x'] = truncate(data['x'], 6000)
+	data_2 = drawdata(data['x'], data['y'], 0.8, ordered=False)
+	x_train = data_2['x_train'][:,:6000]
+	x_test = data_2['x_test'][:,:6000]
+	y_train = data_2['y_train']
+	y_test = data_2['y_test']
+
+	clf = neighbors.classification.KNeighborsClassifier(n_neighbors=3, algorithm='auto', p=2)
+
+	clf.fit(x_train, y_train)
+	y_hat_test = clf.predict(x_test)
+
+	namelist = []
+	for root, dirs, files in os.walk("./Annotations"):
+		namelist.append(dirs)
+	namelist = namelist[0]
+	namelist = np.array(namelist)
+
+	y_test = y_test - 1
+	y_hat_test = y_hat_test - 1
+
+	# namelist2 = []
+	# for i in range(101):
+	# 	namelist2.append(str(i))
+
+	plot_confusion_matrix(y_test, y_hat_test, normalize=True, classes=namelist, title='KNN')
